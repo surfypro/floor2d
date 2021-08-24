@@ -1,0 +1,55 @@
+<html>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<head>
+    <script>
+
+        const buildingName = 'BATIMENT-1';
+        const floorImageName = "R-1"
+        const floorFileName = "R+1"
+
+        const size = { width: 6937, height: 5051 };
+        function makeSVG(tag, attrs) {
+            var el = document.createElementNS('http://www.w3.org/2000/svg', tag);
+            for (var k in attrs)
+                el.setAttribute(k, attrs[k]);
+            return el;
+        }
+    </script>
+</head>
+
+<body>
+    <script>
+        $(document).ready(function () {
+
+            $('#svg').attr('viewBox', `0 0 ${size.width} ${size.heighteight}`)
+            $('#svg').attr('width', size.width);
+            $('#svg').attr('height', size.height)
+
+            $('#bg').attr('width', size.width);
+            $('#bg').attr('height', size.height)
+            $('#bg').attr('href', `data/${buildingName}-${floorImageName}-screenshot.png?${Math.random()}`)
+
+            $.getJSON(`data/${buildingName}-data.json`, function (data) {
+                console.log(data, data.length);
+                data.filter(d => d['etage'] === floorFileName).forEach(d => {
+                    const p = JSON.parse(d.position)
+                    if (d.type === 'poste de travail') {
+                        const circle = makeSVG('circle', { cx: p.x, cy: p.y, r: 10, 'stroke-width': 0, fill: "#0000FF99" });
+                        $('#svg').append(circle)
+                    } else {
+                        const circle = makeSVG('circle', { cx: p.x, cy: p.y, r: d.radius, 'stroke-width': 0, fill: "#FF000099" });
+                        $('#svg').append(circle)
+                    }
+                })
+            }).fail(function () {
+                console.log("An error has occurred.");
+            });
+        });
+    </script>
+    <svg id="svg">
+        <image id="bg" data-background="true"></image>
+    </svg>
+</body>
+
+</html>
